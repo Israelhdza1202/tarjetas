@@ -3,17 +3,12 @@ package com.ibm.academia.entregable.modelo.entidades;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -21,11 +16,10 @@ import lombok.ToString;
 @Getter
 @ToString
 @Entity
-@Table(name = "salarios")
+@NoArgsConstructor
+@Table(name = "salario", schema = "entregable")
 public class Salario implements Serializable{
-	
-	
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -41,6 +35,19 @@ public class Salario implements Serializable{
 	
 	@Column(name = "fecha_modificacion")
 	private Date fechaModificacion;
+
+	@OneToMany(mappedBy = "salario", fetch = FetchType.LAZY)
+	private Set<Preferencia> preferencia ;
+
+	@ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+	@JoinColumn(name = "edad_id", foreignKey = @ForeignKey(name = "FK_EDAD_ID"))
+	private Edad edad;
+
+
+	@ManyToOne(optional = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+	@JoinColumn(name = "tarjeta_id", foreignKey = @ForeignKey(name = "FK_TARJETA_ID"))
+	private Tarjeta tarjeta;
+
 	
 	public Salario(Integer id, String salario, String usuarioCreacion) {
 	

@@ -3,15 +3,9 @@ package com.ibm.academia.entregable.modelo.entidades;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "tarjetas")
+@Table(name = "tarjeta", schema = "entregable")
 public class Tarjeta implements Serializable
 {
 
@@ -42,14 +36,25 @@ public class Tarjeta implements Serializable
 	
 	@Column(name = "fecha_modificacion")
 	private Date fechaModificacion;
-	
-	public Tarjeta(Integer id, String nombre, String usuarioCreacion) {
-		
+
+	@OneToOne(mappedBy = "tarjeta")
+	private Edad edad;
+
+	@OneToMany(mappedBy = "tarjeta", fetch = FetchType.LAZY)
+	private Set<Salario> salario;
+
+	@OneToMany(mappedBy = "tarjeta", fetch = FetchType.LAZY)
+	private Set<Preferencia> preferencia;
+
+
+	public Tarjeta(Integer id, String nombre, String usuarioCreacion, Date fechaCreacion, Date fechaModificacion, Preferencia preferencia, Salario salario, Edad edad) {
 		this.id = id;
 		this.nombre = nombre;
 		this.usuarioCreacion = usuarioCreacion;
+		this.fechaCreacion = fechaCreacion;
+		this.fechaModificacion = fechaModificacion;
+		this.edad = edad;
 	}
-	
 
 	@Override
 	public String toString() {
@@ -70,23 +75,17 @@ public class Tarjeta implements Serializable
 
 
 	@Override
-	public int hashCode() {
-		return Objects.hash( nombre);
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Tarjeta Tarjeta = (Tarjeta) o;
+		return Objects.equals(nombre, Tarjeta.nombre);
 	}
-
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Tarjeta other = (Tarjeta) obj;
-		return Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre);
+	public int hashCode() {
+		return Objects.hash(nombre);
 	}
-
 
 	@PrePersist
 	private void antesPersistir() 

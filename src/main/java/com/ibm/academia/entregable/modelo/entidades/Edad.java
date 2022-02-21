@@ -3,25 +3,17 @@ package com.ibm.academia.entregable.modelo.entidades;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-@Getter
 @Setter
-@ToString
+@Getter
+@NoArgsConstructor
 @Entity
-@Table(name="edades")
+@Table(name = "edad", schema = "entregable")
 public class Edad implements Serializable{
 
 	@Id
@@ -39,10 +31,17 @@ public class Edad implements Serializable{
 	
 	@Column(name = "fecha_modificacion")
 	private Date fechaModificacion;
-	
-	
+
+
+	@OneToMany(mappedBy = "edad", fetch = FetchType.LAZY)
+	private Set<Salario> salario;
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "edad", referencedColumnName = "id")
+	private Tarjeta tarjeta;
+
 	public Edad(Integer id, String edad, String usuarioCreacion) {
-		super();
+
 		this.id = id;
 		this.edad = edad;
 		this.usuarioCreacion = usuarioCreacion;
